@@ -9,6 +9,8 @@ public record LoginResponse(
         UUID id,
         String email,
         String name,
+        String bio,
+        String imageUrl,
         String token
 ) {
 }

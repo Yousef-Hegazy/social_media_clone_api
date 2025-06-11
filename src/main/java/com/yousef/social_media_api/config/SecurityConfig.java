@@ -31,7 +31,7 @@ public class SecurityConfig {
     @Bean
     @Lazy
     public AuthFilter authFilter() {
-     return new AuthFilter(jwtService, userDetailsService);
+        return new AuthFilter(jwtService, userDetailsService);
     }
 
     @Bean
@@ -62,7 +62,9 @@ public class SecurityConfig {
                                         "/v3/api-docs/**",
                                         "/swagger-ui.html",
                                         "/swagger-ui/**",
-                                        "/api/auth/**"
+                                        "/api/auth/login",
+                                        "/api/auth/register",
+                                        "/api/files/**"
                                 ).permitAll()
                                 .anyRequest().authenticated()
                 )

@@ -1,5 +1,6 @@
 package com.yousef.social_media_api.models.auth;
 
+import com.yousef.social_media_api.models.profile.UserProfile;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -14,11 +15,11 @@ import java.util.List;
 import java.util.UUID;
 
 @Entity
-@EntityListeners(AuditingEntityListener.class)
 @Data
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
+@EntityListeners(AuditingEntityListener.class)
 public class AppUser implements UserDetails {
 
     @Id
@@ -26,6 +27,9 @@ public class AppUser implements UserDetails {
     private UUID id;
 
     private String email;
+
+    @OneToOne(mappedBy = "user", orphanRemoval = true, cascade = CascadeType.ALL)
+    private UserProfile profile;
 
     private String name;
 

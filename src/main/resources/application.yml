@@ -34,7 +34,15 @@ springdoc:
     tags-sorter: alpha
 
 
+
 auth:
   jwt:
     secret: 383aff3478af7f5449e873b21c9f8743bfb8a77a15be660eb9e155063ddd8e53764f3a472bc5f0832cf7a2e76acdf775f34c0f5cc0be8065a04ad700eb98e6dadfa6b842b48b7f8edebc20deccff6bdbf2d37b82ad519a3b5ac8d2270b3f9898dc22eaa2d5dee8eed209e9095ff01ed4dfcd49052660c1586ba43abcccb4b5e603a79f06fd6c49f79c41faf25a7499dd40cccae6122a83f90dd9ffe009b981e4148937f56a0a99845639456b4cbf705bf5c17ac0d2abafeec9a3d7d7fa688fe1f3298804c980be61bd29563144ff4b4de5fa738da63172c191f78b4ca673173bcc9baa4b2e5f5fb6ba6ff74b93bcd80e9fc24404ded8803617901ee99debf3f6
     expiration: 86400000
+
+server:
+  max-http-request-header-size: 32KB
+
+uploads:
+  folder: "uploads"
+  max-count: 3
