@@ -67,6 +67,7 @@ public class AuthFilter extends OncePerRequestFilter {
             SecurityContextHolder.getContext().setAuthentication(auth);
         }
 
+            filterChain.doFilter(request, response);
 
         } catch (ExpiredJwtException ex) {
             response.setStatus(HttpStatus.UNAUTHORIZED.value());
@@ -74,17 +75,15 @@ public class AuthFilter extends OncePerRequestFilter {
             ErrorResponse error = ErrorResponse.builder(ex, HttpStatus.UNAUTHORIZED, "Token expired").build();
             final String jsonRes = new ObjectMapper().writeValueAsString(error);
             response.getWriter().write(jsonRes);
+            filterChain.doFilter(request, response);
         } catch(Exception ex) {
             response.setStatus(HttpStatus.UNAUTHORIZED.value());
             response.setContentType(MediaType.APPLICATION_JSON_VALUE);
             ErrorResponse error = ErrorResponse.builder(ex, HttpStatus.UNAUTHORIZED, "Issue verifying token").build();
             final String jsonRes = Json.pretty(error);
             response.getWriter().write(jsonRes);
-        }
-        finally {
             filterChain.doFilter(request, response);
         }
-
 
     }
 

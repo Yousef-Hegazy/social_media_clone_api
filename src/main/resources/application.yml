@@ -24,15 +24,18 @@ spring:
   threads:
     virtual:
       enabled: true
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 15MB
 
 springdoc:
   api-docs:
     path: /v3/api-docs
   swagger-ui:
-    path: /swagger-ui.html
+    path: /swagger-ui
     operations-sorter: method
     tags-sorter: alpha
-
 
 
 auth:

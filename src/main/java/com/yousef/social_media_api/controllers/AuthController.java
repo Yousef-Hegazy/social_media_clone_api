@@ -33,9 +33,11 @@ public class AuthController {
     }
 
     @PostMapping(value = "/update-user", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<CurrentUserResponse> updateUser(@RequestPart("user") @Valid UpdateUserRequest user,
-                                                          @RequestPart(value = "image", required = false) MultipartFile image,
-                                                          Authentication auth) {
+    public ResponseEntity<CurrentUserResponse> updateUser(
+            @RequestPart("user") @Valid UpdateUserRequest user,
+            @RequestPart(value = "image", required = false) MultipartFile image,
+            Authentication auth
+            ) {
         return ResponseEntity.ok(authService.updateUser(user, image, auth));
     }
 }

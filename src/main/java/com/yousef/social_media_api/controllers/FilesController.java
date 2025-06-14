@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.io.IOException;
-import java.net.MalformedURLException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -22,13 +21,19 @@ import java.util.List;
 @RequestMapping("/api/files")
 public class FilesController {
     @Value("${uploads.folder}")
-    private String uploadsFolder;
+    private String localUploadsFolder;
 
-    @GetMapping("/{type}/{folder}/{filename:.+}")
-    public ResponseEntity<?> getFile(@PathVariable String type, @PathVariable String folder, @PathVariable String filename) throws IOException {
+    @GetMapping("/{uploadsFolder}/{type}/{folder}/{filename:.+}")
+    public ResponseEntity<?> getFile(
+            @PathVariable String uploadsFolder,
+            @PathVariable String type,
+            @PathVariable String folder,
+            @PathVariable String filename
+    ) throws IOException {
+
         final List<String> availableTypes = Arrays.stream(AppFileType.values()).map(AppFileType::getName).toList();
 
-        if (type == null || !availableTypes.contains(type) || folder == null || filename == null) {
+        if (!availableTypes.contains(type) || folder == null || filename == null || !uploadsFolder.equals(localUploadsFolder)) {
             return ResponseEntity.badRequest().build();
         }
 

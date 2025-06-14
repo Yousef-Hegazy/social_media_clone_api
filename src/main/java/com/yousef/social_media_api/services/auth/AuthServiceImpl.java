@@ -46,8 +46,6 @@ public class AuthServiceImpl implements AuthService {
                 .id(savedUser.getId())
                 .email(savedUser.getEmail())
                 .name(savedUser.getName())
-                .bio(savedUser.getProfile().getBio())
-                .imageUrl(savedUser.getProfile().getImageUrl())
                 .token(jwtService.generateToken(savedUser))
                 .build();
     }
@@ -64,14 +62,25 @@ public class AuthServiceImpl implements AuthService {
 
         final AppUser user = (AppUser) auth.getPrincipal();
 
-        return LoginResponse.builder()
-                .id(user.getId())
-                .email(user.getEmail())
-                .name(user.getName())
-                .bio(user.getProfile().getBio())
-                .imageUrl(user.getProfile().getImageUrl())
-                .token(jwtService.generateToken(user))
-                .build();
+        final UserProfile profile = user.getProfile();
+
+        if (profile != null) {
+            return LoginResponse.builder()
+                    .id(user.getId())
+                    .email(user.getEmail())
+                    .name(user.getName())
+                    .bio(user.getProfile().getBio())
+                    .imageUrl(user.getProfile().getImageUrl())
+                    .token(jwtService.generateToken(user))
+                    .build();
+        } else {
+            return LoginResponse.builder()
+                    .id(user.getId())
+                    .email(user.getEmail())
+                    .name(user.getName())
+                    .token(jwtService.generateToken(user))
+                    .build();
+        }
     }
 
     @Override
@@ -82,14 +91,25 @@ public class AuthServiceImpl implements AuthService {
             throw new AuthenticationCredentialsNotFoundException("No user is authenticated");
         }
 
-        return CurrentUserResponse.builder()
-                .id(user.getId())
-                .email(user.getEmail())
-                .name(user.getName())
-                .bio(user.getProfile().getBio())
-                .imageUrl(user.getProfile().getImageUrl())
-                .token(jwtService.generateToken(user))
-                .build();
+        final UserProfile profile = user.getProfile();
+
+        if (profile != null) {
+            return CurrentUserResponse.builder()
+                    .id(user.getId())
+                    .email(user.getEmail())
+                    .name(user.getName())
+                    .bio(user.getProfile().getBio())
+                    .imageUrl(user.getProfile().getImageUrl())
+                    .token(jwtService.generateToken(user))
+                    .build();
+        } else {
+            return CurrentUserResponse.builder()
+                    .id(user.getId())
+                    .email(user.getEmail())
+                    .name(user.getName())
+                    .token(jwtService.generateToken(user))
+                    .build();
+        }
     }
 
     @Override
