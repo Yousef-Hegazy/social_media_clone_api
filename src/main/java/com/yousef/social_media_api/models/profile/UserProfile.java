@@ -2,18 +2,15 @@ package com.yousef.social_media_api.models.profile;
 
 import com.yousef.social_media_api.models.auth.AppUser;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.util.UUID;
 
 @Entity
-@Data
-@Builder
 @AllArgsConstructor
 @NoArgsConstructor
+@Getter
+@Setter
 public class UserProfile {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)

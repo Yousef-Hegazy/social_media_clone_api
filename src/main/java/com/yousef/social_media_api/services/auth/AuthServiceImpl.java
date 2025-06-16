@@ -16,7 +16,10 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -42,12 +45,7 @@ public class AuthServiceImpl implements AuthService {
                 .name(request.name())
                 .build());
 
-        return LoginResponse.builder()
-                .id(savedUser.getId())
-                .email(savedUser.getEmail())
-                .name(savedUser.getName())
-                .token(jwtService.generateToken(savedUser))
-                .build();
+        return mapUserToLoginResponse(savedUser);
     }
 
     @Override
@@ -62,58 +60,26 @@ public class AuthServiceImpl implements AuthService {
 
         final AppUser user = (AppUser) auth.getPrincipal();
 
-        final UserProfile profile = user.getProfile();
 
-        if (profile != null) {
-            return LoginResponse.builder()
-                    .id(user.getId())
-                    .email(user.getEmail())
-                    .name(user.getName())
-                    .bio(user.getProfile().getBio())
-                    .imageUrl(user.getProfile().getImageUrl())
-                    .token(jwtService.generateToken(user))
-                    .build();
-        } else {
-            return LoginResponse.builder()
-                    .id(user.getId())
-                    .email(user.getEmail())
-                    .name(user.getName())
-                    .token(jwtService.generateToken(user))
-                    .build();
-        }
+        return mapUserToLoginResponse(user);
     }
 
     @Override
-    public CurrentUserResponse getCurrentUser(Authentication auth) {
+    public LoginResponse getCurrentUser(Authentication auth) {
         final AppUser user = (AppUser) auth.getPrincipal();
 
         if (user == null) {
             throw new AuthenticationCredentialsNotFoundException("No user is authenticated");
         }
 
-        final UserProfile profile = user.getProfile();
 
-        if (profile != null) {
-            return CurrentUserResponse.builder()
-                    .id(user.getId())
-                    .email(user.getEmail())
-                    .name(user.getName())
-                    .bio(user.getProfile().getBio())
-                    .imageUrl(user.getProfile().getImageUrl())
-                    .token(jwtService.generateToken(user))
-                    .build();
-        } else {
-            return CurrentUserResponse.builder()
-                    .id(user.getId())
-                    .email(user.getEmail())
-                    .name(user.getName())
-                    .token(jwtService.generateToken(user))
-                    .build();
-        }
+        return mapUserToLoginResponse(user);
+
     }
 
     @Override
-    public CurrentUserResponse updateUser(UpdateUserRequest user, MultipartFile image, Authentication auth) {
+    @Transactional
+    public LoginResponse updateUser(UpdateUserRequest user, MultipartFile image, Authentication auth) {
         final AppUser authUser = (AppUser) auth.getPrincipal();
 
         if (authUser == null) {
@@ -128,29 +94,46 @@ public class AuthServiceImpl implements AuthService {
 
         if (!user.name().isEmpty()) dbUser.setName(user.name());
 
-        if (dbUser.getProfile() != null) {
-            dbUser.getProfile().setBio(user.bio());
-        } else {
-            dbUser.setProfile(UserProfile.builder()
-                    .user(dbUser)
-                    .bio(user.bio())
-                    .build()
-            );
-        }
-
         final String imageUrl = filesService.saveFile(image, AppFileType.ProfileImage, dbUser.getId().toString());
 
-        dbUser.getProfile().setImageUrl(imageUrl);
+        UserProfile profile = dbUser.getProfile();
+
+
+        if (profile == null) {
+            UserProfile p = new UserProfile();
+            p.setUser(dbUser);
+            p.setBio(user.bio());
+            p.setImageUrl(imageUrl);
+            dbUser.setProfile(p);
+        } else {
+            dbUser.getProfile().setBio(user.bio());
+            dbUser.getProfile().setImageUrl(imageUrl);
+        }
 
         final AppUser updatedUser = userRepository.save(dbUser);
 
-        return CurrentUserResponse.builder()
-                .id(updatedUser.getId())
-                .name(updatedUser.getName())
-                .email(updatedUser.getEmail())
-                .bio(updatedUser.getProfile().getBio())
-                .imageUrl(updatedUser.getProfile().getImageUrl())
-                .token(jwtService.generateToken(updatedUser))
-                .build();
+        return mapUserToLoginResponse(updatedUser);
+    }
+
+    private LoginResponse mapUserToLoginResponse(AppUser user) {
+        final UserProfile profile = user.getProfile();
+
+        if (profile != null) {
+            return LoginResponse.builder()
+                    .id(user.getId())
+                    .email(user.getEmail())
+                    .name(user.getName())
+                    .bio(user.getProfile().getBio())
+                    .imageUrl(user.getProfile().getImageUrl())
+                    .token(jwtService.generateToken(user))
+                    .build();
+        } else {
+            return LoginResponse.builder()
+                    .id(user.getId())
+                    .email(user.getEmail())
+                    .name(user.getName())
+                    .token(jwtService.generateToken(user))
+                    .build();
+        }
     }
 }

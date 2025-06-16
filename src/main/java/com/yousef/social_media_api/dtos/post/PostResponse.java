@@ -12,6 +12,7 @@ public record PostResponse(
         String username,
         String text,
         String imageUrl,
+        String userProfileImageUrl,
         Date timestamp
 ) {
 }

@@ -1,6 +1,7 @@
 package com.yousef.social_media_api.services.files;
 
 import com.yousef.social_media_api.exceptions.files.FailedToSaveFile;
+import com.yousef.social_media_api.exceptions.files.FilesException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -49,6 +50,24 @@ public class LocalFileService implements FilesService {
         }  catch (IOException e) {
             log.error(e.getMessage());
             throw new FailedToSaveFile("Could not save the file: " + file.getOriginalFilename());
+        }
+    }
+
+    @Override
+    public void deleteFolder(AppFileType fileType, String folderName) {
+        final Path path = Paths.get(uploadsFolder, fileType.getName(), folderName);
+        forceDeleteDirectory(path);
+    }
+
+    @Override
+    public void deleteFile(String path) {
+        final Path p = Paths.get(path);
+        try {
+            if (Files.exists(p)) {
+                Files.deleteIfExists(p);
+            }
+        } catch (IOException e) {
+            throw new FilesException("Failed to delete file");
         }
     }
 

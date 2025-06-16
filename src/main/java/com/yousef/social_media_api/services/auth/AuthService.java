@@ -7,7 +7,7 @@ import org.springframework.web.multipart.MultipartFile;
 public interface AuthService {
     LoginResponse register(RegisterRequest request);
     LoginResponse login(LoginRequest request);
-    CurrentUserResponse getCurrentUser(Authentication auth);
+    LoginResponse getCurrentUser(Authentication auth);
 
-    CurrentUserResponse updateUser(UpdateUserRequest user, MultipartFile image, Authentication auth);
+    LoginResponse updateUser(UpdateUserRequest user, MultipartFile image, Authentication auth);
 }

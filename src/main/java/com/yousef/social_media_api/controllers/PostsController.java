@@ -12,6 +12,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.UUID;
+
 @RestController
 @RequestMapping("/api/posts")
 @RequiredArgsConstructor
@@ -30,5 +32,10 @@ public class PostsController {
     @GetMapping
     public ResponseEntity<PagedResponse<PostResponse>> getPosts(@RequestParam(name = "page") int page, @RequestParam(name = "pageSize") int pageSize) {
         return ResponseEntity.ok(postService.getAllPosts(page, pageSize));
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deletePost(@PathVariable UUID id, Authentication auth) {
+        return ResponseEntity.ok(postService.deletePost(id, auth));
     }
 }

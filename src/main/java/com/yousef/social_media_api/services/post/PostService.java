@@ -6,8 +6,12 @@ import com.yousef.social_media_api.helpers.PagedResponse;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.UUID;
+
 public interface PostService {
     PostResponse createPost(CreatePostRequest post, MultipartFile image, Authentication auth);
 
     PagedResponse<PostResponse> getAllPosts(int page, int pageSize);
+
+    Void deletePost(UUID id, Authentication auth);
 }

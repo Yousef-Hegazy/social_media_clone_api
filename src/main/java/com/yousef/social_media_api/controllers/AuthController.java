@@ -28,12 +28,12 @@ public class AuthController {
     }
 
     @GetMapping("/current-user")
-    public ResponseEntity<CurrentUserResponse> getCurrentUser(Authentication auth) {
+    public ResponseEntity<LoginResponse> getCurrentUser(Authentication auth) {
         return ResponseEntity.ok(authService.getCurrentUser(auth));
     }
 
     @PostMapping(value = "/update-user", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<CurrentUserResponse> updateUser(
+    public ResponseEntity<LoginResponse> updateUser(
             @RequestPart("user") @Valid UpdateUserRequest user,
             @RequestPart(value = "image", required = false) MultipartFile image,
             Authentication auth
